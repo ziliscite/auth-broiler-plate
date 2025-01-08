@@ -17,7 +17,6 @@ import (
 	"github.com/ziliscite/messaging-app/pkg/db/posgres"
 	"github.com/ziliscite/messaging-app/pkg/must"
 	"github.com/ziliscite/messaging-app/pkg/ping"
-	"html/template"
 	"net/http"
 )
 
@@ -51,16 +50,6 @@ func main() {
 
 	ping.Register(mux)
 	UserMux(mux, configs.Token, conn)
-
-	mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		t, err := template.ParseFiles("template/index.html")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = t.Execute(w, nil)
-	})
 
 	mux.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("doc.json"),
