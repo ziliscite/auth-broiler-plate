@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/swaggo/http-swagger/v2"
 	"github.com/ziliscite/messaging-app/config"
-	_ "github.com/ziliscite/messaging-app/docs"
+	"github.com/ziliscite/messaging-app/docs"
 	sessionRepository "github.com/ziliscite/messaging-app/internal/adapter/posgres/session"
 	userRepository "github.com/ziliscite/messaging-app/internal/adapter/posgres/user"
 	userHandler "github.com/ziliscite/messaging-app/internal/adapter/rest/user"
@@ -28,9 +28,6 @@ import (
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
-
-// @host localhost:3000
-// @BasePath /
 func main() {
 	configs := config.New()
 
@@ -51,6 +48,8 @@ func main() {
 	ping.Register(mux)
 	UserMux(mux, configs.Token, conn)
 
+	docs.SwaggerInfo.Host = configs.Address()
+	docs.SwaggerInfo.BasePath = "/"
 	mux.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("doc.json"),
 	))
